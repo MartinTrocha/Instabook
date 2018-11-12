@@ -1,4 +1,4 @@
-package com.example.martin.instabook;
+package com.example.hp.socialnetwork;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("com.example.martin.instabook", appContext.getPackageName());
+        assertEquals("com.example.hp.socialnetwork", appContext.getPackageName());
     }
 }

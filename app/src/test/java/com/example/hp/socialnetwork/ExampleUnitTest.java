@@ -1,4 +1,4 @@
-package com.example.martin.instabook;
+package com.example.hp.socialnetwork;
 
 import org.junit.Test;
 
