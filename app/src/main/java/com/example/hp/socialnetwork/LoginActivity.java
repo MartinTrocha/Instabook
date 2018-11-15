@@ -29,7 +29,7 @@ public class LoginActivity extends AppCompatActivity {
     private FirebaseAuth auth;
     private ProgressBar progressBar;
     private Button btnSignup, btnLogin, btnReset;
-
+    private Boolean wasLoggedIn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +40,8 @@ public class LoginActivity extends AppCompatActivity {
 
         if (auth.getCurrentUser() != null) {
             startActivity(new Intent(LoginActivity.this, MainActivity.class));
+            finish();
+        } else if (auth.getCurrentUser() == null && (wasLoggedIn != null && wasLoggedIn)) {
             finish();
         }
 
@@ -116,8 +118,9 @@ public class LoginActivity extends AppCompatActivity {
 //                                        userName = userInfo.getDisplayName();
 //                                        email = userInfo.getEmail();
 //                                    }
-                                    startActivity(intent);
                                     finish();
+                                    startActivity(intent);
+                                    wasLoggedIn = true;
                                 }
                             }
                         });
@@ -135,5 +138,11 @@ public class LoginActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         Log.d(TAG, "DESTROYED");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d(TAG, "RESUMED Login");
     }
 }

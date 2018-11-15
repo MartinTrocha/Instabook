@@ -41,6 +41,8 @@ public class MainActivity extends AppCompatActivity
     private FirebaseAuth auth;
     private TextView userName;
     private TextView emailName;
+    private String usernameText;
+    private String emailText;
     private Boolean isLoggedIn = null;
     private Boolean isMinimized = null;
 
@@ -54,18 +56,6 @@ public class MainActivity extends AppCompatActivity
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        // toto treba na logout
-        auth = FirebaseAuth.getInstance();
-        // ak to zapinam prvy krat
-        if (auth.getCurrentUser() == null) {
-            isLoggedIn = false;
-            finish();
-//            Intent intent = new Intent(this, LoginActivity.class);
-//            startActivity(intent);
-        } else {
-            isLoggedIn = true;
-        }
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -87,22 +77,40 @@ public class MainActivity extends AppCompatActivity
         View headerMainPanel = navigationView.getHeaderView(0);
         Intent intentThatStartedThisActivity = getIntent();
 
+        userName = (TextView) headerMainPanel.findViewById(R.id.loggedInName);
+        emailName = (TextView) headerMainPanel.findViewById(R.id.loggedInEmail);
+
+        // toto treba na logout
+        auth = FirebaseAuth.getInstance();
+        // ak to zapinam prvy krat
+        if (auth.getCurrentUser() == null) {
+            isLoggedIn = false;
+            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+            intent.addCategory(Intent.CATEGORY_ALTERNATIVE);
+            finish();
+            startActivity(new Intent(MainActivity.this, LoginActivity.class));
+            Log.w(TAG_INFO,"LoginActivity called when UserNotLoggedIn");
+
+        } else {
+            usernameText = auth.getCurrentUser().getDisplayName();
+            emailText = auth.getCurrentUser().getEmail();
+            userName.setText(usernameText);
+            emailName.setText(emailText);
+            isLoggedIn = true;
+        }
+
         if (intentThatStartedThisActivity != null) {
             if (intentThatStartedThisActivity.hasExtra(RegisterActivity.USERNAME_KEY_R) && intentThatStartedThisActivity.hasExtra(RegisterActivity.EMAIL_KEY_R)) {
-                String resultName = intentThatStartedThisActivity.getStringExtra(RegisterActivity.USERNAME_KEY_R);
-                String resultEmail = intentThatStartedThisActivity.getStringExtra(RegisterActivity.EMAIL_KEY_R);
-                userName = (TextView) headerMainPanel.findViewById(R.id.loggedInName);
-                userName.setText(resultName);
-                emailName = (TextView) headerMainPanel.findViewById(R.id.loggedInEmail);
-                emailName.setText(resultEmail);
+                usernameText = intentThatStartedThisActivity.getStringExtra(RegisterActivity.USERNAME_KEY_R);
+                emailText = intentThatStartedThisActivity.getStringExtra(RegisterActivity.EMAIL_KEY_R);
+                userName.setText(usernameText);
+                emailName.setText(emailText);
             } else if (intentThatStartedThisActivity.hasExtra(LoginActivity.EMAIL_KEY)) {
-                String resultEmail = intentThatStartedThisActivity.getStringExtra(LoginActivity.EMAIL_KEY);
-                String resultName = intentThatStartedThisActivity.getStringExtra(LoginActivity.USERNAME_KEY);
+                usernameText = intentThatStartedThisActivity.getStringExtra(LoginActivity.USERNAME_KEY);
+                emailText = intentThatStartedThisActivity.getStringExtra(LoginActivity.EMAIL_KEY);
                 //auth.getInstance().getCurrentUser().getDisplayName();
-                userName = (TextView) headerMainPanel.findViewById(R.id.loggedInName);
-                userName.setText(resultName);
-                emailName = (TextView) headerMainPanel.findViewById(R.id.loggedInEmail);
-                emailName.setText(resultEmail);
+                userName.setText(usernameText);
+                emailName.setText(emailText);
             }
         }
         initViewPager();
@@ -162,7 +170,7 @@ public class MainActivity extends AppCompatActivity
     private void minimizeApp() {
         Intent startMain = new Intent(Intent.ACTION_MAIN);
         startMain.addCategory(Intent.CATEGORY_LAUNCHER);
-        startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        // startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(startMain);
         isMinimized = true;
     }
@@ -220,7 +228,24 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_logout) {
             Log.d(TAG_INFO,"Logging out");
-            finish();
+            if(isMinimized == null) {
+                auth.signOut();
+                auth.addAuthStateListener(new FirebaseAuth.AuthStateListener() {
+                    @Override
+                    public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                        FirebaseUser user = firebaseAuth.getCurrentUser();
+                        if (user == null) {
+                            // user auth state is changed - user is null
+                            // launch login activity
+                            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                            intent.addCategory(Intent.CATEGORY_ALTERNATIVE);
+                            finish();
+                            startActivity(new Intent(MainActivity.this, LoginActivity.class));
+                            Log.w(TAG_INFO, "LoginActivity STARTED");
+                        }
+                    }
+                });
+            }
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -232,22 +257,6 @@ public class MainActivity extends AppCompatActivity
     protected void onDestroy() {
         super.onDestroy();
         Log.d(TAG_INFO, "DESTROYED!");
-        if(isMinimized == null) {
-            auth.signOut();
-            auth.addAuthStateListener(new FirebaseAuth.AuthStateListener() {
-                @Override
-                public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                    FirebaseUser user = firebaseAuth.getCurrentUser();
-                    if (user == null) {
-                        // user auth state is changed - user is null
-                        // launch login activity
-                        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-                        intent.addCategory(Intent.CATEGORY_ALTERNATIVE);
-                        startActivity(new Intent(MainActivity.this, LoginActivity.class));
-                    }
-                }
-            });
-        }
     }
 
     @Override
@@ -267,7 +276,8 @@ public class MainActivity extends AppCompatActivity
         super.onResume();
         Log.d(TAG_INFO, "Resumed");
         if (!isLoggedIn) {
-            finish();
+            // should call authentificate
+             finish();
         } else if (isMinimized != null && isMinimized) {
             isMinimized = null;
         }
