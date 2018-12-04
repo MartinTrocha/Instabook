@@ -1,10 +1,13 @@
 package com.example.hp.socialnetwork;
 
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -17,11 +20,18 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import com.example.hp.socialnetwork.model.PostModel;
 import com.example.hp.socialnetwork.model.ProfileModel;
 import com.example.hp.socialnetwork.model.StatusModel;
+import com.example.hp.socialnetwork.model.UserModel;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserInfo;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import org.w3c.dom.Text;
 
@@ -35,14 +45,24 @@ public class MainActivity extends AppCompatActivity
     public static String PARENT_BUNDLE="socialnetwork.parent";
     public static String CHILD_BUNDLE="socialnetwork.child";
     public static String TAG_INFO = "socialnetwork.logout";
+    private final String USERS_TABLE = "users";
+    private final String TAG = "Main Activity";
 
+    private FirebaseDatabase mDatabaseRef;
     public HorizontalViewPagerAdapter viewPagerAdapter;
     public HorizontalViewPager viewPager;
     private FirebaseAuth auth;
+    private UserModel userLoggedIn;
+
+    // Drawer header variables
     private TextView userName;
     private TextView emailName;
+    private TextView dateOfRegistration;
+    private TextView numberOfPosts;
+
+    private AddPost postDialogBox;
     private String usernameText;
-    private String emailText;
+    private String userIdtext;
     private Boolean isLoggedIn = null;
     private Boolean isMinimized = null;
 
@@ -57,14 +77,7 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -75,44 +88,89 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         View headerMainPanel = navigationView.getHeaderView(0);
-        Intent intentThatStartedThisActivity = getIntent();
 
         userName = (TextView) headerMainPanel.findViewById(R.id.loggedInName);
         emailName = (TextView) headerMainPanel.findViewById(R.id.loggedInEmail);
+        dateOfRegistration = (TextView) headerMainPanel.findViewById(R.id.userProfileDateCreatedText);
+        numberOfPosts = (TextView) headerMainPanel.findViewById(R.id.userNumberOfPostsText);
 
         // toto treba na logout
         auth = FirebaseAuth.getInstance();
-        // ak to zapinam prvy krat
-        if (auth.getCurrentUser() == null) {
-            isLoggedIn = false;
-            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-            intent.addCategory(Intent.CATEGORY_ALTERNATIVE);
-            finish();
-            startActivity(new Intent(MainActivity.this, LoginActivity.class));
-            Log.w(TAG_INFO,"LoginActivity called when UserNotLoggedIn");
+        mDatabaseRef = FirebaseDatabase.getInstance();
 
-        } else {
-            usernameText = auth.getCurrentUser().getDisplayName();
-            emailText = auth.getCurrentUser().getEmail();
-            userName.setText(usernameText);
-            emailName.setText(emailText);
-            isLoggedIn = true;
-        }
-
-        if (intentThatStartedThisActivity != null) {
-            if (intentThatStartedThisActivity.hasExtra(RegisterActivity.USERNAME_KEY_R) && intentThatStartedThisActivity.hasExtra(RegisterActivity.EMAIL_KEY_R)) {
-                usernameText = intentThatStartedThisActivity.getStringExtra(RegisterActivity.USERNAME_KEY_R);
-                emailText = intentThatStartedThisActivity.getStringExtra(RegisterActivity.EMAIL_KEY_R);
-                userName.setText(usernameText);
-                emailName.setText(emailText);
-            } else if (intentThatStartedThisActivity.hasExtra(LoginActivity.EMAIL_KEY)) {
-                usernameText = intentThatStartedThisActivity.getStringExtra(LoginActivity.USERNAME_KEY);
-                emailText = intentThatStartedThisActivity.getStringExtra(LoginActivity.EMAIL_KEY);
-                //auth.getInstance().getCurrentUser().getDisplayName();
-                userName.setText(usernameText);
-                emailName.setText(emailText);
+        // populovanie DAT na main drawer bocny a informacie prihlasenom userovi
+        FirebaseHelpers.getCurrentUserDataFromDb(auth.getCurrentUser().getUid(), new FirebaseResultsImpl() {
+            @Override
+            public void onUserResult(UserModel user) {
+                userName.setText(user.getUsername());
+                emailName.setText(user.getEmail());
+                numberOfPosts.setText("Number of Posts posted: " + user.getNumberOfPosts().toString());
+                dateOfRegistration.setText("Date of registration: " + user.getDate());
+                usernameText = user.getUsername().toString();
+                userIdtext = user.getDbKey();
+                isLoggedIn = true;
             }
-        }
+
+            // if it fails show Dialog Box so the user knows
+            @Override
+            public void onUserResultFailed() {
+                AlertDialog.Builder builder;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    builder = new AlertDialog.Builder(getApplicationContext(), android.R.style.Theme_Material_Dialog_Alert);
+                } else {
+                    builder = new AlertDialog.Builder(getApplicationContext());
+                }
+                builder.setTitle("Unable to fetch registered User")
+                        .setNegativeButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                // just go back to login
+                                finish();
+                            }
+                        })
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .show();
+            }
+        });
+
+        // TIETO TRI BUTTONY SU NA TESTOVANIE ALE PRVY JE NA PRIDANIE PRISPEVKU
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab_add_post);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                postDialogBox = new AddPost(MainActivity.this,usernameText,userIdtext);
+                postDialogBox.show();
+            }
+        });
+
+        FloatingActionButton fab2 = (FloatingActionButton) findViewById(R.id.fab_get_posts);
+        fab2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FirebaseHelpers.getPostsByUserId(userIdtext, new FirebaseResultsImpl() {
+
+                    @Override
+                    public void onPostResultById(List<PostModel> posts) {
+                        Log.e(TAG, "POSTS BY LOGGED USER");
+                    }
+                });
+            }
+        });
+
+        FloatingActionButton fab3 = (FloatingActionButton) findViewById(R.id.fab_get_all_posts);
+        fab3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FirebaseHelpers.getAllPostsFromDbOrderedByRecency(new FirebaseResultsImpl() {
+
+                    @Override
+                    public void onPostResultAll(List<PostModel> posts) {
+                        Log.e(TAG, "ALL POSTS ADDED");
+                    }
+                });
+            }
+        });
+
         initViewPager();
     }
 
@@ -167,13 +225,13 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    private void minimizeApp() {
-        Intent startMain = new Intent(Intent.ACTION_MAIN);
-        startMain.addCategory(Intent.CATEGORY_LAUNCHER);
-        // startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(startMain);
-        isMinimized = true;
-    }
+//    private void minimizeApp() {
+//        Intent startMain = new Intent(Intent.ACTION_MAIN);
+//        startMain.addCategory(Intent.CATEGORY_LAUNCHER);
+//        // startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//        startActivity(startMain);
+//        isMinimized = true;
+//    }
 
     @Override
     public void onBackPressed() {
@@ -182,7 +240,7 @@ public class MainActivity extends AppCompatActivity
             drawer.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
-            minimizeApp();
+            // minimizeApp();
         }
     }
 
@@ -227,6 +285,7 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_send) {
 
         } else if (id == R.id.nav_logout) {
+            // Pridal som handlovanie buttonu na logout
             Log.d(TAG_INFO,"Logging out");
             if(isMinimized == null) {
                 auth.signOut();
@@ -237,11 +296,11 @@ public class MainActivity extends AppCompatActivity
                         if (user == null) {
                             // user auth state is changed - user is null
                             // launch login activity
-                            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-                            intent.addCategory(Intent.CATEGORY_ALTERNATIVE);
+                            //Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                            //intent.addCategory(Intent.CATEGORY_ALTERNATIVE);
                             finish();
-                            startActivity(new Intent(MainActivity.this, LoginActivity.class));
-                            Log.w(TAG_INFO, "LoginActivity STARTED");
+                            startActivity(new Intent(MainActivity.this, InitialActivity.class));
+                            Log.w(TAG_INFO, "Initial Activity STARTED");
                         }
                     }
                 });
@@ -262,7 +321,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onPause() {
         super.onPause();
-        Log.d(TAG_INFO, "Minimized!!");
+        Log.d(TAG_INFO, "PAUSED!!");
     }
 
     @Override
@@ -275,11 +334,11 @@ public class MainActivity extends AppCompatActivity
     protected void onResume() {
         super.onResume();
         Log.d(TAG_INFO, "Resumed");
-        if (!isLoggedIn) {
-            // should call authentificate
-             finish();
-        } else if (isMinimized != null && isMinimized) {
-            isMinimized = null;
-        }
+//        if (!isLoggedIn) {
+//            // should call authentificate
+//            finish();
+//        } else if (isMinimized != null && isMinimized) {
+//            isMinimized = null;
+//        }
     }
 }

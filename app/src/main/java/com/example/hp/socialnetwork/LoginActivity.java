@@ -18,38 +18,31 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.UserInfo;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class LoginActivity extends AppCompatActivity {
 
-    public static final String EMAIL_KEY = "com.example.hp.socialnetwork.emailKey";
-    public static final String USERNAME_KEY = "com.example.hp.socialnetwork.usernameKey";
     private final String TAG = "LoginActivity";
 
     private EditText inputEmail, inputPassword;
     private FirebaseAuth auth;
     private ProgressBar progressBar;
     private Button btnSignup, btnLogin, btnReset;
-    private Boolean wasLoggedIn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        //Get Firebase auth instance
-        auth = FirebaseAuth.getInstance();
-
-        if (auth.getCurrentUser() != null) {
-            startActivity(new Intent(LoginActivity.this, MainActivity.class));
-            finish();
-        } else if (auth.getCurrentUser() == null && (wasLoggedIn != null && wasLoggedIn)) {
-            finish();
-        }
-
         // set the view now
         setContentView(R.layout.activity_login);
-
-//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-//        setSupportActionBar(toolbar);
+//        if (savedInstanceState == null) {
+//            finish();
+//        }
+        auth = FirebaseAuth.getInstance();
 
         inputEmail = (EditText) findViewById(R.id.emailEditTextL);
         inputPassword = (EditText) findViewById(R.id.passwordEditTextL);
@@ -58,8 +51,6 @@ public class LoginActivity extends AppCompatActivity {
         btnLogin = (Button) findViewById(R.id.btn_login);
         btnReset = (Button) findViewById(R.id.btn_reset_password);
 
-        //Get Firebase auth instance
-        auth = FirebaseAuth.getInstance();
 
         btnSignup.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -110,28 +101,13 @@ public class LoginActivity extends AppCompatActivity {
                                         Toast.makeText(LoginActivity.this, getString(R.string.auth_failed), Toast.LENGTH_LONG).show();
                                     }
                                 } else {
-                                    String email, userName;
-                                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                                    intent.putExtra(EMAIL_KEY, task.getResult().getUser().getEmail());
-                                    intent.putExtra(USERNAME_KEY, task.getResult().getUser().getDisplayName());
-//                                    for (UserInfo userInfo : task.getResult().getUser().getProviderData()) {
-//                                        userName = userInfo.getDisplayName();
-//                                        email = userInfo.getEmail();
-//                                    }
                                     finish();
-                                    startActivity(intent);
-                                    wasLoggedIn = true;
+                                    startActivity(new Intent(LoginActivity.this, MainActivity.class));
                                 }
                             }
                         });
             }
         });
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        finish();
     }
 
     @Override

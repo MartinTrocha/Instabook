@@ -37,4 +37,7 @@
     <string name="btn_sign_out">Sign Out</string>
     <string name="lbl_forgot_password">Forgot password?</string>
     <string name="forgot_password_msg">We just need your registered Email Id to sent you password reset instructions.</string>
+    <string name="successful_reg_text">You successfully registered! Now you can Log In</string>
+    <string name="add_post_text">Add a new post to wall!</string>
+    <string name="add_post_text_type">Choose if you want to upload video or photo: </string>
 </resources>
