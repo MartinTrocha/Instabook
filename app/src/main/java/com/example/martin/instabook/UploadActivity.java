@@ -47,10 +47,6 @@ import static com.example.martin.instabook.Utilities.saveVideoToInternalStorage;
 
 public class UploadActivity extends Activity {
 
-    private String url = "http://mobv.mcomputing.eu/upload/index.php";
-    private String uploadUri = "http://mobv.mcomputing.eu/upload/v/";
-
-    EditText edtResp;
     Button btnPickImage;
     Button btnCaptureImage;
     Button btnPickVideo;
@@ -65,14 +61,13 @@ public class UploadActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Fresco.initialize(this);
+//        setTheme(android.R.style.Theme_Dialog);
         setContentView(R.layout.upload_main);
 
         btnPickImage = (Button) findViewById(R.id.btnPickImage);
         btnCaptureImage = (Button) findViewById(R.id.btnCaptureImage);
         btnPickVideo = (Button) findViewById(R.id.btnPickVideo);
         btnCaptureVideo = (Button) findViewById(R.id.btnCaptureVideo);
-        edtResp = (EditText) findViewById(R.id.edtResp);
 
         btnPickImage.setOnClickListener(new View.OnClickListener() {
 
@@ -337,7 +332,7 @@ public class UploadActivity extends Activity {
 
             String charset = "UTF-8";
             File uploadFile1 = new File(filename);
-            String requestURL = url;
+            String requestURL = MainActivity.UPLOAD_URL;
 
             MultipartUtility multipart = new MultipartUtility(requestURL, charset);
 
@@ -419,14 +414,12 @@ public class UploadActivity extends Activity {
         //response callback
         @Override
         protected void onPostExecute(String result) {
-            edtResp.setText(result);
 
             JSONObject jsonObj = null;
             try {
                 jsonObj = new JSONObject(result);
-                Uri uri = Uri.parse(uploadUri + jsonObj.get("message"));
-                SimpleDraweeView draweeView = (SimpleDraweeView) findViewById(R.id.my_image_view);
-                draweeView.setImageURI(uri);
+                System.out.println(jsonObj.get("message"));
+
             } catch (JSONException e) {
                 e.printStackTrace();
             } catch (NullPointerException e) {

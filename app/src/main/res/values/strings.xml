@@ -38,4 +38,8 @@
     <string name="successful_reg_text">You successfully registered! Now you can Log In</string>
     <string name="add_post_text">Add a new post to wall!</string>
     <string name="add_post_text_type">Choose if you want to upload video or photo: </string>
+    <string name="pick_image">Pick image</string>
+    <string name="capture_image">Capture image</string>
+    <string name="pick_video">Pick video</string>
+    <string name="capture_video">Capture video</string>
 </resources>

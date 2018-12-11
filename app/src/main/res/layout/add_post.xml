@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -14,63 +16,69 @@
         android:textSize="15dp" />
 
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="198dp"
+        android:layout_height="198dp"
         android:layout_gravity="center"
-        android:background="@color/common_google_signin_btn_text_light_disabled"
-        android:layout_margin="10sp"
-        android:orientation="vertical" >
-        <Button
-            android:id="@+id/btn_add_post_file"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:clickable="true"
-            android:text="Upload File"
-            android:textColor="@color/black" />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/add_post_text_type"/>
-        <Spinner
-            android:id="@+id/spinner_choose_type"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:spinnerMode="dropdown"/>
-
-
-    </LinearLayout>
-
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:background="@color/common_google_signin_btn_text_light_disabled"
-        android:orientation="horizontal" >
+        android:background="@color/common_google_signin_btn_text_light_disabled">
 
         <Button
-            android:id="@+id/btn_add_post_okay"
-            android:layout_width="100dp"
-            android:layout_height="30dp"
-            android:background="@color/colorPrimaryDark"
-            android:clickable="true"
-            android:text="Okay"
-            android:textColor="#5DBCD2"
-            android:textStyle="bold"
-            android:layout_margin="10sp"/>
-        <Button
-            android:id="@+id/btn_add_post_cancel"
-            android:layout_width="100dp"
-            android:layout_height="30dp"
-            android:background="@color/colorPrimaryDark"
-            android:clickable="true"
-            android:text="Cancel"
-            android:textColor="#5DBCD2"
-            android:textStyle="bold"
-            android:layout_margin="10sp"/>
+            android:id="@+id/btnPickImage"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/edtResp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:background="@android:drawable/ic_menu_gallery"
+            app:layout_constraintEnd_toStartOf="@+id/btnPickVideo"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    </LinearLayout>
+        <Button
+            android:id="@+id/btnCaptureImage"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/btnPickImage"
+            android:layout_marginBottom="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/ic_menu_camera"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/btnCaptureVideo"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/btnPickImage" />
+
+        <Button
+            android:id="@+id/btnPickVideo"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignTop="@+id/btnPickImage"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/ic_menu_slideshow"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/btnCaptureVideo"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            android:layout_alignParentEnd="true"
+            android:layout_below="@+id/btnPickImage"
+            android:layout_marginBottom="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="16dp"
+            android:background="@android:drawable/presence_video_online"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/btnPickVideo" />
+
+    </android.support.constraint.ConstraintLayout>
 
 </LinearLayout>
 
