@@ -41,7 +41,7 @@ public class RecyclerAdapterVertical extends RecyclerView.Adapter<RecyclerViewHo
     public void onBindViewHolder(@NonNull RecyclerViewHolderVertical recyclerViewHolder, int i) {
 
         // TODO : obcas bugne profil a zobrazi obrazok
-        
+
         SimpleDraweeView imgView = recyclerViewHolder.view.findViewById(R.id.imgView);
 
         TextView txtAuthor = recyclerViewHolder.view.findViewById(R.id.txtAuthor);
