@@ -2,6 +2,7 @@ package com.example.martin.instabook;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -14,12 +15,15 @@ import android.widget.Toast;
 import com.example.martin.instabook.model.PostModel;
 import com.facebook.drawee.view.SimpleDraweeView;
 
+import java.net.URL;
 import java.util.Random;
 
 public class RecyclerAdapterVertical extends RecyclerView.Adapter<RecyclerViewHolderVertical> {
     private UserView dataset;
     private LayoutInflater inflater;
     private Context context;
+
+    public static final String URL_KEY = "com.example.martin.instabook.URLKEY";
 
 
     public RecyclerAdapterVertical(Context context, UserView dataset) {
@@ -34,6 +38,12 @@ public class RecyclerAdapterVertical extends RecyclerView.Adapter<RecyclerViewHo
         // TODO: spusti aktivitu na prehranie videa
         if(post.getType().toLowerCase().equals("video")){
             Toast.makeText(this.context, String.format("play video: %s%s", MainActivity.DOWNLOAD_URL, post.getImageUrl()),Toast.LENGTH_SHORT).show();
+            Intent startVideoIntent = new Intent(context.getApplicationContext(), VideoActivity.class);
+            if (post.getVideoUrl() != null) {
+                startVideoIntent.putExtra(URL_KEY, MainActivity.DOWNLOAD_URL + post.getVideoUrl());
+                context.startActivity(startVideoIntent);
+            }
+
         }
     }
 

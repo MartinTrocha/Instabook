@@ -19,8 +19,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.martin.instabook.model.PostModel;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.google.firebase.auth.FirebaseUser;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -52,6 +54,10 @@ public class UploadActivity extends Activity {
     Button btnPickVideo;
     Button btnCaptureVideo;
 
+    private String type = null;
+    private String userIdUploader;
+    private String usernameUploader;
+
     public static final int REQUEST_PICK_IMAGE = 1;
     public static final int REQUEST_CAPTURE_IMAGE = 2;
     public static final int REQUEST_PICK_VIDEO = 3;
@@ -63,6 +69,10 @@ public class UploadActivity extends Activity {
         super.onCreate(savedInstanceState);
 //        setTheme(android.R.style.Theme_Dialog);
         setContentView(R.layout.upload_main);
+
+        // ZE KTORY PRIHLASENY USER TO UPLOADUJE
+        userIdUploader = getIntent().getStringExtra(MainActivity.USER_ID_UPLOADER_KEY);
+        usernameUploader = getIntent().getStringExtra(MainActivity.USERNAME_UPLOADER_KEY);
 
         btnPickImage = (Button) findViewById(R.id.btnPickImage);
         btnCaptureImage = (Button) findViewById(R.id.btnCaptureImage);
@@ -258,7 +268,7 @@ public class UploadActivity extends Activity {
         if (requestCode == REQUEST_PICK_IMAGE) {
 
             try {
-
+                type = MainActivity.PHOTO_TYPE;
                 Uri selectedImage = data.getData();
                 String[] filePathColumn = {MediaStore.Images.Media.DATA};
 
@@ -278,7 +288,7 @@ public class UploadActivity extends Activity {
         if (requestCode == REQUEST_PICK_VIDEO) {
 
             try {
-
+                type = MainActivity.VIDEO_TYPE;
                 Uri contentURI = data.getData();
 
                 String selectedVideoPath = getVideoPath(contentURI);
@@ -296,7 +306,7 @@ public class UploadActivity extends Activity {
         if (requestCode == REQUEST_CAPTURE_VIDEO) {
 
             try {
-
+                type = MainActivity.VIDEO_TYPE;
                 String filepath=getVideoPath(data.getData());
                 new SendHttpRequestTask().execute(filepath);
 
@@ -308,6 +318,7 @@ public class UploadActivity extends Activity {
         if (requestCode == REQUEST_CAPTURE_IMAGE) {
 
             try {
+                type = MainActivity.PHOTO_TYPE;
                 Bitmap photo = (Bitmap) data.getExtras().get("data");
 
                 Uri tempUri = getImageUri(getApplicationContext(), photo);
@@ -419,7 +430,16 @@ public class UploadActivity extends Activity {
             try {
                 jsonObj = new JSONObject(result);
                 System.out.println(jsonObj.get("message"));
-
+                // TUTO TO ODJEBEM Z JSONA AKO MI TOMI POVEDAL A NAJEBEM DO DATABAZY
+                String urlToDb = jsonObj.get("message").toString();
+                if (type.toLowerCase().equals("photo")) {
+                    PostModel newPost = new PostModel(urlToDb, "",type, userIdUploader, usernameUploader);
+                    FirebaseHelpers.addPostToDb(newPost);
+                } else if(type.toLowerCase().equals("video")) {
+                    PostModel newPost = new PostModel("",urlToDb,type, userIdUploader, usernameUploader);
+                    FirebaseHelpers.addPostToDb(newPost);
+                }
+                finish();
             } catch (JSONException e) {
                 e.printStackTrace();
             } catch (NullPointerException e) {

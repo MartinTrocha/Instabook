@@ -66,7 +66,13 @@ public class MainActivity extends AppCompatActivity  {
 
     public static String UPLOAD_URL = "http://mobv.mcomputing.eu/upload/index.php";
     public static String DOWNLOAD_URL = "http://mobv.mcomputing.eu/upload/v/";
-    public static String PHOTO_TYPE = "Photo";
+    public static String PHOTO_TYPE = "photo";
+    public static String VIDEO_TYPE = "video";
+
+    public static final String USER_ID_UPLOADER_KEY = "com.example.martin.instabook.USERID_UPLOAD_KEY";
+    public static final String USERNAME_UPLOADER_KEY = "com.example.martin.instabook.USERNAME_UPLOAD_KEY";
+
+    private final String TAG = "MainActivityLOG";
 
     public static final int REQUEST_PICK_IMAGE = 1;
     public static final int REQUEST_CAPTURE_IMAGE = 2;
@@ -134,16 +140,21 @@ public class MainActivity extends AppCompatActivity  {
         numberOfPosts = headerHeader.findViewById(R.id.num_posts_header);
 
 
+
+
+        this._init();
+
         FloatingActionButton fab = findViewById(R.id.btnAddPost);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent myIntent = new Intent(getApplicationContext(), UploadActivity.class);
+                // TODO: Mozno to este zmenim ze nech to taha z DB a nie z AUTH
+                myIntent.putExtra(USER_ID_UPLOADER_KEY, userIdtext);
+                myIntent.putExtra(USERNAME_UPLOADER_KEY, usernameText);
                 startActivity(myIntent);
             }
         });
-
-        this._init();
     }
 
     private void _init(){
@@ -158,7 +169,9 @@ public class MainActivity extends AppCompatActivity  {
                 FragmentPlaceholder fragmentPlaceholderHorizontal = new FragmentPlaceholder();
                 fragmentPlaceholderHorizontal.setTest(posts);
 
-                getSupportFragmentManager().beginTransaction().add(R.id.container, fragmentPlaceholderHorizontal).commit();
+                // Trebalo dat sem Replace lebo potom sa tam davali viacere fragmenty furt ked sa vratilo
+                getSupportFragmentManager().beginTransaction().replace(R.id.container, fragmentPlaceholderHorizontal).commit();
+                // getSupportFragmentManager().beginTransaction().add(R.id.container, fragmentPlaceholderHorizontal).commitAllowingStateLoss();
                 navigationDrawerInit();
             }
         });
@@ -204,23 +217,24 @@ public class MainActivity extends AppCompatActivity  {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        //Log.d(TAG_INFO, "DESTROYED!");
+        Log.d(TAG, "DESTROYED MAIN ACTIVITY!");
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        //Log.d(TAG_INFO, "PAUSED!!");
+        Log.d(TAG, "PAUSED MAIN ACTIVITY!");
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        //Log.d(TAG_INFO, "STOPPED!!");
+        Log.d(TAG, "STOPPED MAIN ACTIVITY");
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        Log.d(TAG,"RESUMED MAIN ACTIVITY");
     }
 }

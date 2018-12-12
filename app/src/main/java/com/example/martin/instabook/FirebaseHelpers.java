@@ -40,6 +40,11 @@ class FirebaseHelpers {
         }
     }
 
+    // Len tak keby daco
+    public static FirebaseUser getUser() {
+        return FirebaseAuth.getInstance().getCurrentUser();
+    }
+
     public static void getCurrentUserDataFromDb(String uid, final FirebaseResults callback) {
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference(USERS_TABLE);
         Query query = ref.child(uid);
@@ -56,7 +61,7 @@ class FirebaseHelpers {
 
                     result.setDate((Long) ((HashMap) map.get("date")).get("date"));
                     result.setEmail((String) map.get("email"));
-                    result.setNumberOfPosts(Integer.valueOf(map.get("numberOfPosts").toString())); // konverzia na pana
+                    result.setNumberOfPosts(Integer.valueOf(map.get("numberOfPosts").toString())); // konverzia na pana :OOO
                     result.setUsername((String) map.get("username"));
                     result.setEmail((String) map.get("email"));
                     result.setDbKey(dataSnapshot.getKey());
@@ -79,7 +84,7 @@ class FirebaseHelpers {
         });
     }
 
-    // TODO osetrit
+    // TODO osetrit... A co  osetrit ?
     // Tato metoda vrati vsetky prispevky prihlaseneho usera alebo vlozeneho userId
     public static void getPostsByUserId(final String userIdFromCall, final FirebaseResults callback) {
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference(POSTS_TABLE);
@@ -104,14 +109,14 @@ class FirebaseHelpers {
         });
     }
 
-    /* TODO osetrit
+    /* TODO osetrit... a co ?
     Tato metoda ti ma vratit zoradene vsetky prispevky zoradene podla najnovsieho
      */
     public static void getAllPostsFromDbOrderedByRecency(final FirebaseResults callback) {
 
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference(POSTS_TABLE);
 
-        // TODO: Zoradit podla firebase ale je to taka picovina ze to nedokaze podla tych childov urcit ze ktory
+        // TODO: Zoradit podla firebase ale je to taka picovina ze to nedokaze podla tych childov urcit ze ktory... tomu ver ze nevie
         ref.orderByChild(ref.child("date").getKey()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {

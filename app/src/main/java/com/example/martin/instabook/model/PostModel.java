@@ -4,6 +4,7 @@ import com.google.firebase.database.Exclude;
 import com.google.firebase.database.ServerValue;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.TimeZone;
 
@@ -53,6 +54,7 @@ public class PostModel implements Serializable {
         return ServerValue.TIMESTAMP;
     }
 
+    @Exclude
     public long getDateAsLong(){
         return this.date;
     }
@@ -83,11 +85,11 @@ public class PostModel implements Serializable {
     }
 
     public String dateToStr() {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss z");
         Calendar cal = Calendar.getInstance();
         cal.setTimeZone(TimeZone.getTimeZone("UTC"));
         cal.setTimeInMillis(this.date);
-        return (cal.get(Calendar.YEAR) + "-" + (cal.get(Calendar.MONTH) + 1) + "-"
-                + cal.get(Calendar.DAY_OF_MONTH) + " " + cal.get(Calendar.HOUR_OF_DAY) + ":"
-                + cal.get(Calendar.MINUTE) + ":" + cal.get(Calendar.SECOND));
+        String formatedDate = format.format(cal.getTime());
+        return formatedDate;
     }
 }
