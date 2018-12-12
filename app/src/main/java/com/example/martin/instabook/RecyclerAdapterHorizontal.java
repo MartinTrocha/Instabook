@@ -61,10 +61,23 @@ public class RecyclerAdapterHorizontal extends RecyclerView.Adapter<RecyclerView
                 recyclerView.setLayoutManager(recyclerViewLayoutManager);
                 recyclerViewLayoutManager.scrollToPosition(1); // nastavuje defaultne na 1 poziciu , 0 je profil
 
-                PagerSnapHelper snapHelper = new PagerSnapHelper();
+                final PagerSnapHelper snapHelper = new PagerSnapHelper();
                 if (recyclerView.getOnFlingListener() == null) {
                     snapHelper.attachToRecyclerView(recyclerView);
                 }
+
+                recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                    @Override
+                    public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                        super.onScrollStateChanged(recyclerView, newState);
+                        if(newState == RecyclerView.SCROLL_STATE_IDLE) {
+                            View centerView = snapHelper.findSnapView(recyclerViewLayoutManager);
+                            if(centerView != null){
+                                current_vertical_position = recyclerViewLayoutManager.getPosition(centerView);
+                            }
+                        }
+                    }
+                });
 
                 final RecyclerView.Adapter recyclerViewAdapter = new RecyclerAdapterVertical(inflater.getContext(), nextDataset);
                 recyclerView.setAdapter(recyclerViewAdapter);
@@ -85,27 +98,6 @@ public class RecyclerAdapterHorizontal extends RecyclerView.Adapter<RecyclerView
             }
         });
 
-//        FirebaseHelpers.getPostsByUserId(this.dataset.get(i).getUserId(), new FirebaseResultsImpl(){
-//
-//            UserView userView = new UserView(dataset.get(index).getUserId());
-//
-//            @Override
-//            public void onPostResultById(List<PostModel> posts) {
-//                super.onPostResultById(posts);
-//
-//                userView.setMedia(posts);
-//                FirebaseHelpers.getCurrentUserDataFromDb(dataset.get(index).getUserId(), new FirebaseResultsImpl(){
-//                    @Override
-//                    public void onUserResult(UserModel user) {
-//                        super.onUserResult(user);
-//                        userView.setUserModel(user);
-//                        nextDataset.add(userView);
-//                    }
-//                });
-//            }
-//        });
-
-
     }
 
     @Override
@@ -113,8 +105,4 @@ public class RecyclerAdapterHorizontal extends RecyclerView.Adapter<RecyclerView
         return this.dataset.size();
     }
 
-    /*public void setUserProfile(UserModel user){
-        UserView userView = new UserView();
-        userView.setUserModel(user);
-    }*/
 }

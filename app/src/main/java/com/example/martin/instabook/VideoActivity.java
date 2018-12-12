@@ -71,7 +71,6 @@ public class VideoActivity extends AppCompatActivity {
 
         playerView = (PlayerView) findViewById(R.id.player_view);
 
-        // TOTO ZREJME POJDE DO PICI
         mainHandler = new Handler();
         bandwidthMeter = new DefaultBandwidthMeter();
     }

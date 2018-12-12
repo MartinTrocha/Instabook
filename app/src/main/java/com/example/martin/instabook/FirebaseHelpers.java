@@ -53,7 +53,7 @@ class FirebaseHelpers {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 UserModel result;
-                // data su dojebane a obcas to hodi date ako mapu a obcas normalne ako Long
+
                 try {
 
                     result = new UserModel();//dataSnapshot.getValue(UserModel.class);
@@ -84,7 +84,6 @@ class FirebaseHelpers {
         });
     }
 
-    // TODO osetrit... A co  osetrit ?
     // Tato metoda vrati vsetky prispevky prihlaseneho usera alebo vlozeneho userId
     public static void getPostsByUserId(final String userIdFromCall, final FirebaseResults callback) {
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference(POSTS_TABLE);
@@ -109,14 +108,13 @@ class FirebaseHelpers {
         });
     }
 
-    /* TODO osetrit... a co ?
+    /*
     Tato metoda ti ma vratit zoradene vsetky prispevky zoradene podla najnovsieho
      */
     public static void getAllPostsFromDbOrderedByRecency(final FirebaseResults callback) {
 
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference(POSTS_TABLE);
 
-        // TODO: Zoradit podla firebase ale je to taka picovina ze to nedokaze podla tych childov urcit ze ktory... tomu ver ze nevie
         ref.orderByChild(ref.child("date").getKey()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -146,7 +144,7 @@ class FirebaseHelpers {
     }
 
     /*
-    Tato metoda prida prispevok a este aj updatne udaje o uzivatelovi ze kolko ich uz tam najebal
+    Tato metoda prida prispevok a este aj updatne udaje o uzivatelovi ze kolko ich uz tam dal
      */
     public static void addPostToDb(final PostModel newPost) {
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference(POSTS_TABLE);

@@ -38,8 +38,19 @@ public class FragmentPlaceholder extends Fragment {
         RecyclerView.LayoutManager recyclerViewLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
         recyclerView.setLayoutManager(recyclerViewLayoutManager);
 
-        RecyclerView.Adapter recyclerViewAdapter = new RecyclerAdapterHorizontal(this.getContext(), postModels);
+        final RecyclerView.Adapter recyclerViewAdapter = new RecyclerAdapterHorizontal(this.getContext(), postModels);
         recyclerView.setAdapter(recyclerViewAdapter);
+
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                Toast.makeText(getContext(), String.valueOf(((RecyclerAdapterHorizontal) recyclerViewAdapter).current_vertical_position), Toast.LENGTH_SHORT).show();
+                if(((RecyclerAdapterHorizontal) recyclerViewAdapter).current_vertical_position != 1) {
+                    recyclerView.stopScroll();
+                }
+            }
+        });
 
         PagerSnapHelper snapHelper = new PagerSnapHelper();
         snapHelper.attachToRecyclerView(recyclerView);
