@@ -45,7 +45,6 @@ public class FragmentPlaceholder extends Fragment {
             @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
-                Toast.makeText(getContext(), String.valueOf(((RecyclerAdapterHorizontal) recyclerViewAdapter).current_vertical_position), Toast.LENGTH_SHORT).show();
                 if(((RecyclerAdapterHorizontal) recyclerViewAdapter).current_vertical_position != 1) {
                     recyclerView.stopScroll();
                 }
