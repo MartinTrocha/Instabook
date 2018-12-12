@@ -9,7 +9,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.martin.instabook.model.PostModel;
 import com.facebook.drawee.view.SimpleDraweeView;
 
 import java.util.Random;
@@ -17,16 +19,23 @@ import java.util.Random;
 public class RecyclerAdapterVertical extends RecyclerView.Adapter<RecyclerViewHolderVertical> {
     private UserView dataset;
     private LayoutInflater inflater;
-    //private Context context;
+    private Context context;
 
 
     public RecyclerAdapterVertical(Context context, UserView dataset) {
 
         this.inflater = LayoutInflater.from(context);
         this.dataset = dataset; // horizontal hodnoty
-        //this.context=context;
+        this.context=context;
     }
 
+    public void onImageClick(PostModel post){
+
+        // TODO: spusti aktivitu na prehranie videa
+        if(post.getType().toLowerCase().equals("video")){
+            Toast.makeText(this.context, String.format("play video: %s", post.getImageUrl()),Toast.LENGTH_SHORT).show();
+        }
+    }
 
     @NonNull
     @Override
@@ -40,15 +49,24 @@ public class RecyclerAdapterVertical extends RecyclerView.Adapter<RecyclerViewHo
     @Override
     public void onBindViewHolder(@NonNull RecyclerViewHolderVertical recyclerViewHolder, int i) {
 
-        // TODO : obcas bugne profil a zobrazi obrazok
+        // TODO : dorobit zobrazenie profilu
+
+        final int index=i;
 
         SimpleDraweeView imgView = recyclerViewHolder.view.findViewById(R.id.imgView);
+
+        imgView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onImageClick(dataset.getMedia().get(index-1));
+            }
+        });
 
         TextView txtAuthor = recyclerViewHolder.view.findViewById(R.id.txtAuthor);
         TextView txtDate = recyclerViewHolder.view.findViewById(R.id.txtDate);
 
         if (i == 0) {
-            imgView.setEnabled(false);
+            imgView.setVisibility(View.INVISIBLE);
             try {
                 txtAuthor.setText(this.dataset.getUserModel().getUsername());
                 txtDate.setText("profil");
@@ -58,7 +76,7 @@ public class RecyclerAdapterVertical extends RecyclerView.Adapter<RecyclerViewHo
             }
         } else {
 
-            imgView.setEnabled(true);
+            imgView.setVisibility(View.VISIBLE);
             try {
 
                 txtAuthor.setText(this.dataset.getUserModel().getUsername());

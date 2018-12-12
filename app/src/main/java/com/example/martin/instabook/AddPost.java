@@ -69,41 +69,41 @@ public class AddPost extends Dialog {
         btnCaptureVideo = (Button) findViewById(R.id.btnCaptureVideo);
         //edtResp = (EditText) findViewById(R.id.edtResp);
 
-        btnPickImage.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                owner.onBtnPickImageClick(v);
-                dismiss();
-            }
-        });
-
-        btnCaptureImage.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                owner.onBtnCaptureImageClick(v);
-                dismiss();
-            }
-        });
-
-        btnPickVideo.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                owner.onBtnPickVideoClick(v);
-                dismiss();
-            }
-        });
-
-        btnCaptureVideo.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                owner.onBtnCaptureVideoClick(v);
-                dismiss();
-            }
-        });
+//        btnPickImage.setOnClickListener(new View.OnClickListener() {
+//
+//            @Override
+//            public void onClick(View v) {
+//                owner.onBtnPickImageClick(v);
+//                dismiss();
+//            }
+//        });
+//
+//        btnCaptureImage.setOnClickListener(new View.OnClickListener() {
+//
+//            @Override
+//            public void onClick(View v) {
+//                owner.onBtnCaptureImageClick(v);
+//                dismiss();
+//            }
+//        });
+//
+//        btnPickVideo.setOnClickListener(new View.OnClickListener() {
+//
+//            @Override
+//            public void onClick(View v) {
+//                owner.onBtnPickVideoClick(v);
+//                dismiss();
+//            }
+//        });
+//
+//        btnCaptureVideo.setOnClickListener(new View.OnClickListener() {
+//
+//            @Override
+//            public void onClick(View v) {
+//                owner.onBtnCaptureVideoClick(v);
+//                dismiss();
+//            }
+//        });
 
     }
 
