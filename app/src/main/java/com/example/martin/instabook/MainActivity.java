@@ -100,15 +100,9 @@ public class MainActivity extends AppCompatActivity  {
                 // Handle navigation view item clicks here.
                 int id = menuItem.getItemId();
 
-                if (id == R.id.nav_camera) {
-                    // Handle the camera action
-                } else if (id == R.id.nav_gallery) {
+                if (id == R.id.nav_gallery) {
                     startActivity(new Intent(MainActivity.this, UploadActivity.class));
-                } else if (id == R.id.nav_slideshow) {
-
-                } else if (id == R.id.nav_manage) {
-
-                } else if (id == R.id.nav_logout) {
+                }  else if (id == R.id.nav_logout) {
 
                     auth.signOut();
 
@@ -149,7 +143,7 @@ public class MainActivity extends AppCompatActivity  {
             @Override
             public void onClick(View view) {
                 Intent myIntent = new Intent(getApplicationContext(), UploadActivity.class);
-                // TODO: Mozno to este zmenim ze nech to taha z DB a nie z AUTH
+                // mozno to este zmenim ze nech to taha z DB a nie z AUTH
                 myIntent.putExtra(USER_ID_UPLOADER_KEY, userIdtext);
                 myIntent.putExtra(USERNAME_UPLOADER_KEY, usernameText);
                 startActivity(myIntent);

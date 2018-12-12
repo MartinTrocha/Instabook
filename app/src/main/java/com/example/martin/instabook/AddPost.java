@@ -107,7 +107,7 @@ public class AddPost extends Dialog {
 
     }
 
-    //TODO spravit ukladanie do db
+    // spravit ukladanie do db
 
     /*@Override
     public void onClick(View v) {

@@ -83,7 +83,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View v) {
             String email = inputEmail.getText().toString();
             final String password = inputPassword.getText().toString();
-            // TODO texty do strings
+
             if (TextUtils.isEmpty(email)) {
                 Toast.makeText(getApplicationContext(), "Enter email address!", Toast.LENGTH_SHORT).show();
                 return;
