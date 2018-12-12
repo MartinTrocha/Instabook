@@ -39,7 +39,7 @@ public class RecyclerAdapterVertical extends RecyclerView.Adapter<RecyclerViewHo
 
     public void onImageClick(PostModel post){
 
-        // TODO: spusti aktivitu na prehranie videa
+        // spusti aktivitu na prehranie videa
         if(post.getType().toLowerCase().equals("video")){
             Toast.makeText(this.context, String.format("play video: %s%s", MainActivity.DOWNLOAD_URL, post.getImageUrl()),Toast.LENGTH_SHORT).show();
             Intent startVideoIntent = new Intent(context.getApplicationContext(), VideoActivity.class);
@@ -63,7 +63,6 @@ public class RecyclerAdapterVertical extends RecyclerView.Adapter<RecyclerViewHo
     @Override
     public void onBindViewHolder(@NonNull RecyclerViewHolderVertical recyclerViewHolder, int i) {
 
-        // TODO : dorobit zobrazenie profilu
 
         final int index=i;
 
