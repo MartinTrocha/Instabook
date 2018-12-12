@@ -48,9 +48,6 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        // TODO je to tu len pre develop ucely, treba zmazat v ostrej verzii
-        auth = FirebaseAuth.getInstance();
-        auth.signOut();
     }
 
 
