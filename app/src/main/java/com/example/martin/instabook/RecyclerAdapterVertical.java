@@ -33,7 +33,7 @@ public class RecyclerAdapterVertical extends RecyclerView.Adapter<RecyclerViewHo
 
         // TODO: spusti aktivitu na prehranie videa
         if(post.getType().toLowerCase().equals("video")){
-            Toast.makeText(this.context, String.format("play video: %s", post.getImageUrl()),Toast.LENGTH_SHORT).show();
+            Toast.makeText(this.context, String.format("play video: %s%s", MainActivity.DOWNLOAD_URL, post.getImageUrl()),Toast.LENGTH_SHORT).show();
         }
     }
 
