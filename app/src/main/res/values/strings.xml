@@ -42,4 +42,5 @@
     <string name="capture_image">Capture image</string>
     <string name="pick_video">Pick video</string>
     <string name="capture_video">Capture video</string>
+    <string name="postedOnText">Posted On : </string>
 </resources>

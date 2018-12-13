@@ -80,6 +80,7 @@ public class RecyclerAdapterVertical extends RecyclerView.Adapter<RecyclerViewHo
         if (i == 0) {
             // imgView.setVisibility(View.INVISIBLE);
             imgView.setImageURI(userPlaceholderImageUrl);
+            imgView.setOnClickListener(null);
             txtEmailContactHint.setVisibility(View.VISIBLE);
             txtEmailContact.setVisibility(View.VISIBLE);
             try {
@@ -125,6 +126,8 @@ public class RecyclerAdapterVertical extends RecyclerView.Adapter<RecyclerViewHo
                 txtNumPostsUser.setText("");
                 if (this.dataset.getMedia().get(i-1).getType().equals(MainActivity.PHOTO_TYPE)) {
                     imgView.setImageURI(MainActivity.DOWNLOAD_URL + this.dataset.getMedia().get(i-1).getImageUrl());
+                } else if (this.dataset.getMedia().get(i-1).getType().equals(MainActivity.VIDEO_TYPE)){
+                    imgView.setImageResource(R.drawable.video);
                 }
 
             } catch (Exception e) {

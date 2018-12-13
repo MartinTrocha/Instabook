@@ -12,10 +12,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         fresco:viewAspectRatio="1"
-        fresco:placeholderImage="@drawable/video"
-        fresco:placeholderImageScaleType="fitXY"
+        fresco:placeholderImage="@android:drawable/stat_notify_sync_noanim"
+        fresco:placeholderImageScaleType="centerCrop"
         fresco:progressBarImage="@android:drawable/stat_notify_sync_noanim"
-        fresco:progressBarImageScaleType="fitXY"
+        fresco:progressBarImageScaleType="centerCrop"
         fresco:roundedCornerRadius="25dp"
         fresco:roundingBorderWidth="3dp"
         fresco:roundingBorderColor="@color/colorAccent"
@@ -50,6 +50,8 @@
         android:id="@+id/linearLayout"
         android:layout_width="362dp"
         android:layout_height="115dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -60,14 +62,12 @@
             android:id="@+id/postedOnText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Posted on : " />
+            android:text="@string/postedOnText"/>
 
         <TextView
             android:id="@+id/txtDate"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
-            android:text="TextView" />
+            android:layout_height="wrap_content" />
 
         <TextView
             android:id="@+id/numberOfPostsUserPostedProfileId"
